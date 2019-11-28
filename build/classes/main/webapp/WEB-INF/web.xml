@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+    <!--<!DOCTYPE web-app PUBLIC
+     "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+     "http://java.sun.com/dtd/web-app_2_3.dtd" >-->
+
+    <!--<web-app>-->
+    <display-name>Archetype Created Web Application</display-name>
+
+    <!--spring beans配置文件所在目录-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:config/spring.xml</param-value>
+    </context-param>
+    <!--监听spring上下文的bean加载-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!--spring mvc配置-->
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>WEB-INF/spring-servlet.xml</param-value>
+        </init-param>
+        <!--启动时就加载本servlet-->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <!--编码-->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>ture</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--项目启动默认访问页面-->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!--druid访问-->
+    <!--<servlet>
+      <servlet-name>DruidStatServlet</servlet-name>
+      <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+      <init-param>
+        <param-name>loginUsername</param-name>
+        <param-value>druid</param-value>
+      </init-param>
+      <init-param>
+        <param-name>loginPassword</param-name>
+        <param-value>druid</param-value>
+      </init-param>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>DruidStatServlet</servlet-name>
+      <url-pattern>/sys/druid/*</url-pattern>
+    </servlet-mapping>
+    <filter>
+      <filter-name>DruidWebStatFilter</filter-name>
+      <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+      <init-param>
+        <param-name>exclusions</param-name>
+        <param-value>*.jsp,*.css,*.png,*.gif,/sys/druid/*</param-value>
+      </init-param>
+    </filter>
+    <servlet-mapping>
+      <servlet-name>DruidStatServlet</servlet-name>
+      <url-pattern>/*</url-pattern>
+    </servlet-mapping>-->
+</web-app>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.sys.dao.SysRequestLogDao">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.test.sys.entity.SysRequestLog">
+	<id column="id" property="id" jdbcType="BIGINT" />
+	<id column="request_user" property="requestUser" jdbcType="VARCHAR" />
+	<id column="request_param" property="requestParam" jdbcType="VARCHAR" />
+	<id column="request_url" property="requestUrl" jdbcType="VARCHAR" />
+	<id column="request_time" property="requestTime" jdbcType="DATE" />
+	<id column="return_status" property="returnStatus" jdbcType="SMALLINT" />
+	<id column="return_data" property="returnData" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	id, request_user, request_param, request_url, request_time, return_status, return_data
+	</sql>
+
+</mapper>

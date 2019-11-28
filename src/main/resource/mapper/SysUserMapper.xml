@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.sys.dao.SysUserMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.test.sys.entity.SysUser">
+	<id column="id" property="id" jdbcType="BIGINT" />
+	<id column="username" property="username" jdbcType="VARCHAR" />
+	<id column="telephone" property="telephone" jdbcType="VARCHAR" />
+	<id column="mail" property="mail" jdbcType="VARCHAR" />
+	<id column="password" property="password" jdbcType="VARCHAR" />
+	<id column="dept_id" property="deptId" jdbcType="INTEGER" />
+	<id column="status" property="status" jdbcType="INTEGER" />
+	<id column="operator" property="operator" jdbcType="VARCHAR" />
+	<id column="operator_time" property="operatorTime" jdbcType="DATE" />
+	<id column="operator_ip" property="operatorIp" jdbcType="VARCHAR" />
+	<id column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	id, username, telephone, mail, password, dept_id, status, operator, operator_time, operator_ip, remark
+	</sql>
+	
+	<select id="getPageByDeptId" parameterType="map" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List"/>
+		FROM sys_user
+		WHERE dept_id = #{deptId}
+		ORDER BY username ASC
+		LIMIT #{page.offset},#{page.pageSize}
+	</select>
+
+</mapper>

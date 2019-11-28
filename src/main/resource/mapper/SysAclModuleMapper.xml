@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.sys.dao.SysAclModuleMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.test.sys.entity.SysAclModule">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<id column="name" property="name" jdbcType="VARCHAR" />
+	<id column="parent_id" property="parentId" jdbcType="INTEGER" />
+	<id column="level" property="level" jdbcType="VARCHAR" />
+	<id column="seq" property="seq" jdbcType="INTEGER" />
+	<id column="status" property="status" jdbcType="INTEGER" />
+	<id column="operator" property="operator" jdbcType="VARCHAR" />
+	<id column="operator_time" property="operatorTime" jdbcType="DATE" />
+	<id column="operator_ip" property="operatorIp" jdbcType="VARCHAR" />
+	<id column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	id, name, parent_id, level, seq, status, operator, operator_time, operator_ip, remark
+	</sql>
+	
+	<select id="getChilAclModuleListByLevel" parameterType="string" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"></include>
+		FROM sys_acl_module
+		WHERE level LIKE #{level} || '.%'
+	</select>
+
+	<update id="batchUpdateLevel" parameterType="map" >
+		<foreach collection="sysAclModuleList" item="sysAclModule" separator=";">
+			UPDATE sys_acl_module
+			SET level = #{sysAclModule.level}
+			WHERE id = #{sysAclModule.id}
+		</foreach>
+	</update>
+
+</mapper>

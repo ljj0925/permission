@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.sys.dao.SysAclDao">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.test.sys.entity.SysAcl">
+	<id column="id" property="id" jdbcType="BIGINT" />
+	<id column="code" property="code" jdbcType="VARCHAR" />
+	<id column="name" property="name" jdbcType="VARCHAR" />
+	<id column="acl_module_id" property="aclModuleId" jdbcType="INTEGER" />
+	<id column="url" property="url" jdbcType="VARCHAR" />
+	<id column="type" property="type" jdbcType="INTEGER" />
+	<id column="status" property="status" jdbcType="INTEGER" />
+	<id column="seq" property="seq" jdbcType="INTEGER" />
+	<id column="operator" property="operator" jdbcType="VARCHAR" />
+	<id column="operator_time" property="operatorTime" jdbcType="DATE" />
+	<id column="operator_ip" property="operatorIp" jdbcType="VARCHAR" />
+	<id column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	id, code, name, acl_module_id, url, type, status, seq, operator, operator_time, operator_ip, remark
+	</sql>
+	
+	<select id="getPageByAclModuleId" parameterType="map" resultMap="BaseResultMap">
+		SELECT <include refid="Base_Column_List"/>
+		FROM sys_acl
+		WHERE acl_module_id = #{aclModuleId}
+		ORDER BY seq ASC,name ASC
+		LIMIT #{page.offset},#{page.pageSize}
+	</select>
+
+</mapper>

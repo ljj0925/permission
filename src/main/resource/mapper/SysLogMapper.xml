@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.sys.dao.SysLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.test.sys.entity.SysLog">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<id column="new_value" property="newValue" jdbcType="VARCHAR" />
+	<id column="old_value" property="oldValue" jdbcType="VARCHAR" />
+	<id column="operator" property="operator" jdbcType="VARCHAR" />
+	<id column="operator_ip" property="operatorIp" jdbcType="VARCHAR" />
+	<id column="operator_time" property="operatorTime" jdbcType="DATE" />
+	<id column="status" property="status" jdbcType="INTEGER" />
+	<id column="target_id" property="targetId" jdbcType="INTEGER" />
+	<id column="type" property="type" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	id, new_value, oid_value, operator, operator_ip, operator_time, status, target_id, type
+	</sql>
+
+</mapper>

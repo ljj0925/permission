@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+
+    <!--控制台日志输出-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+            <charset>GBK</charset>
+        </encoder>
+    </appender>
+
+
+    <!--输出到文件日志-->
+<!--    <appender name="system" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Prudent>true</Prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash;保存到tomcat根目录&ndash;&gt;
+            <fileNamePattern>../logs/error/permission-%d{yyyy-MM-dd}.log</fileNamePattern>
+            &lt;!&ndash;保存最大文件数&ndash;&gt;
+            <maxHistory>99</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            &lt;!&ndash; 只收集ERROR级别的日志，ERROR以上和以下都不收集 &ndash;&gt;
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+    <!-- 输出到文件日志-->
+    <!--<appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/log/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>99</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            &lt;!&ndash; 收集ERROR及ERROR以上级别的日志 &ndash;&gt;
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+
+    <!--ROOT的子打印器，可以配置多个-->
+<!--
+    <logger name="xxx" level="INFO">
+        <appender-ref ref="console"/>
+        <appender-ref ref="system"/>
+    </logger>
+-->
+
+    <!--root是根日志打印器，只有一个，负责整个系统的日志输出-->
+    <root level="INFO">
+        <appender-ref ref="console"/>
+        <!--<appender-ref ref="system"/>-->
+    </root>
+</configuration>

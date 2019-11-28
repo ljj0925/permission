@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.sys.dao.SysRoleDao">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.test.sys.entity.SysRole">
+	<id column="id" property="id" jdbcType="INTEGER" />
+	<id column="name" property="name" jdbcType="VARCHAR" />
+	<id column="type" property="type" jdbcType="INTEGER" />
+	<id column="status" property="status" jdbcType="INTEGER" />
+	<id column="operator" property="operator" jdbcType="VARCHAR" />
+	<id column="operator_time" property="operatorTime" jdbcType="DATE" />
+	<id column="operator_ip" property="operatorIp" jdbcType="VARCHAR" />
+	<id column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+	id, name, type, status, operator, operator_time, operator_ip, remark
+	</sql>
+
+</mapper>

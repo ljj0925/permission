@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <!--springmvc配置文件，包含网站跳转逻辑控制，配置  -->
+
+    <!--包扫描-->
+    <context:component-scan base-package="com.test.sys.*"/>
+
+    <!-- 两个标准配置 -->
+    <!-- 静态资源请求处理 -->
+    <mvc:default-servlet-handler/>
+    <!-- @RequestMapping,处理请求映射，请求路径使用哪个类哪个方法处理 -->
+    <mvc:annotation-driven/>
+
+    <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+
+    <!--@RequestMapping注解-->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+    <!--返回视图处理-->
+    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+    <!--处理json返回-->
+    <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+
+    <!--freemarker-->
+    <!--先从/WEB-INF/ftl/下找ftl文件，如果没有就去jsp下面找-->
+    <!-- 配置freeMarker视图解析器（可解析HTML） -->
+    <bean id="viewResolverFtl" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+        <property name="contentType" value="text/html; charset=UTF-8"/>
+        <property name="exposeRequestAttributes" value="true"/>
+        <property name="exposeSessionAttributes" value="true"/>
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="cache" value="true"/>
+        <property name="suffix" value=".ftl"/>
+        <property name="order" value="0"/>
+    </bean>
+    <!-- 配置freeMarker的模板路径 -->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="template_update_delay">3600</prop>
+                <prop key="locale">zh_CN</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="date_format">yyyy-MM-dd</prop>
+                <prop key="number_format">#.##</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- jsp视图解析 -->
+    <bean id="jspviewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="order" value="1"/>
+    </bean>
+
+    <!--静态资源-->
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/bootstrap3.3.5/" mapping="/bootstrap3.3.5/**"/>
+    <mvc:resources location="/assets/" mapping="/assets/**"/>
+
+    <!-- swagger -->
+    <bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig"/>
+    <mvc:resources mapping="/swagger/**" location="WEB-INF/swagger/"/>
+    <mvc:resources mapping="index.html" location="WEB-INF/swagger/"/>
+    <mvc:redirect-view-controller path="/" redirect-url="index.html"/>
+
+
+    <!--自定义全局异常处理类，加入到ioc-->
+    <bean class="com.test.common.GolableExceptionResolver"/>
+
+    <!--自定义类实现从spring ioc中获取指定bean。关闭延迟加载-->
+    <bean class="com.test.common.ApplicationContextUtils" lazy-init="false"/>
+
+    <!--自定义拦截器配置-->
+<!--    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            &lt;!&ndash;不拦截&ndash;&gt;
+            <mvc:exclude-mapping path="/login.page"/>
+            <bean class="com.test.common.HttpInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>-->
+
+    <!--AOP-->
+    <aop:aspectj-autoproxy />
+    <bean class="com.test.common.LogsAspect" />
+
+    <!--全局日期转换-->
+    <!--配置注解处理器适配器-->
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <!--配置自定义日期转换器，并且在mvc:annotation-driven 标签中加上conversion-service属性-->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="com.test.common.DateConverter"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

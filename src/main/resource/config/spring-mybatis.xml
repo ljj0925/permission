@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <!-- 数据源 -->
+    <context:property-placeholder location="classpath:settings.properties"/>
+    <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="0"/>
+        <!-- 连接池最大使用连接数量 -->
+        <property name="maxActive" value="100"/>
+        <!-- 连接池最大空闲 -->
+        <!--<property name="maxIdle" value="20"/>-->
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="0"/>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="60000"/>
+
+        <property name="validationQuery" value="${validationQuery}"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="25200000"/>
+
+        <!-- 打开removeAbandoned功能 -->
+        <property name="removeAbandoned" value="true"/>
+        <!-- 1800秒，也就是30分钟 -->
+        <property name="removeAbandonedTimeout" value="1800"/>
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="true"/>
+
+        <!-- 配置监控统计拦截的filters,属性类型是字符串,通过别名的方式配置扩展插件,
+        	常用的插件有:监控统计用的STAT;日志用的log4j;防御SQL注入的wall -->
+        <property name="filters" value="mergeStat,wall,stat,sl4j"/>
+
+        <!--慢SQL记录-->
+        <property name="connectionProperties" value="druid.stat.merggSql=ture;druid.stat.slowSqlMillis=5000"/>
+
+    </bean>
+
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.test.sys.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+
+    <!--druid-spring监控-->
+    <bean id="druid-stat-interceptor"
+          class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
+    </bean>
+    <bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut"
+          scope="prototype">
+        <property name="patterns">
+            <list>
+                <value>com.test.*</value>
+                <value>com.test.*</value>
+            </list>
+        </property>
+    </bean>
+    <aop:config>
+        <aop:advisor advice-ref="druid-stat-interceptor" pointcut-ref="transactionPointcut"/>
+    </aop:config>
+
+    <!-- Spring整合Mybatis -->
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 扫描xml文件 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!-- 配置 MyBatis配置文件的位置 -->
+        <property name="configLocation" value="classpath:config/mybatis-config.xml"/>
+        <!--给包中的类注册别名，注册后在 Mapper 对应的 XML 文件中可以直接使用类名-->
+        <property name="typeAliasesPackage" value="com.test.*.entity"/>
+
+
+        <property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <!--<bean id="paginationInterceptor" class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">-->
+                <bean id="paginationInterceptor"
+                      class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor">
+                </bean>
+            </array>
+        </property>
+        <!-- 全局配置注入 -->
+        <!--<property name="globalConfig" ref="globalConfig"/>-->
+
+        <!--全局配置-->
+        <property name="globalConfig">
+            <bean class="com.baomidou.mybatisplus.core.config.GlobalConfig">
+                <property name="dbConfig">
+                    <bean class="com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig">
+                        <property name="idType" value="AUTO" />
+                        <!--<property name="tablePrefix" value="sys_" />-->
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
+    </bean>
+
+    <!--<bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+        &lt;!&ndash;
+            AUTO->`0`("数据库ID自增")
+             INPUT->`1`(用户输入ID")
+            ID_WORKER->`2`("全局唯一ID")
+            UUID->`3`("全局唯一ID")
+        &ndash;&gt;
+        <property name="idType" value="0" />
+        &lt;!&ndash;
+            MYSQL->`mysql`
+            ORACLE->`oracle`
+            DB2->`db2`
+            H2->`h2`
+            HSQL->`hsql`
+            SQLITE->`sqlite`
+            POSTGRE->`postgresql`
+            SQLSERVER2005->`sqlserver2005`
+            SQLSERVER->`sqlserver`
+        &ndash;&gt;
+        &lt;!&ndash; Oracle需要添加该项 &ndash;&gt;
+        &lt;!&ndash; <property name="dbType" value="oracle" /> &ndash;&gt;
+        &lt;!&ndash; 全局表为下划线命名设置 true &ndash;&gt;
+        &lt;!&ndash; <property name="dbColumnUnderline" value="true" /> &ndash;&gt;
+        &lt;!&ndash;<property name="metaObjectHandler">
+            <bean class="com.baomidou.springmvc.common.MyMetaObjectHandler" />
+        </property>&ndash;&gt;
+    </bean>-->
+
+    <!-- mapper接口包路径  -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.test.*.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 配置事务管理 -->
+    <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 事务管理 -->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--需要在事务中执行的方法-->
+            <tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="append*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="modify*" propagation="REQUIRED"/>
+            <tx:method name="edit*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="repair" propagation="REQUIRED"/>
+
+            <!--除get，find等开头的方法外，其他都在事务中执行，read-only只读事务，不加锁-->
+            <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="load*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="search*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="datagrid*" propagation="REQUIRED" read-only="true"/>
+
+            <tx:method name="*" propagation="REQUIRED" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置切面 -->
+    <aop:config>
+        <aop:pointcut id="transactionPointcut" expression="execution(* com.test.sys.service..*.*(..))"/>
+        <!--测试期间暂时关闭事务-->
+        <!--<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice"/>-->
+    </aop:config>
+
+</beans>
